@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Config.xcconfig
+        env:
+          SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_URL_SCHEME: ${{ secrets.GOOGLE_URL_SCHEME }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        run: |
+          cat > Config.xcconfig <<EOF
+          SUPABASE_HOST = ${SUPABASE_HOST:-placeholder.supabase.co}
+          SUPABASE_URL_SLASH = /
+          SUPABASE_URL = https:\$(SUPABASE_URL_SLASH)\$(SUPABASE_URL_SLASH)\$(SUPABASE_HOST)
+          SUPABASE_ANON_KEY = ${SUPABASE_ANON_KEY:-placeholder-key}
+          GOOGLE_CLIENT_ID = ${GOOGLE_CLIENT_ID:-placeholder}
+          GOOGLE_URL_SCHEME = ${GOOGLE_URL_SCHEME:-placeholder}
+          GOOGLE_PLACES_API_KEY = ${GOOGLE_PLACES_API_KEY:-placeholder}
+          EOF
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build and test
+        run: |
+          xcodebuild test \
+            -project Familator.xcodeproj \
+            -scheme Familator \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            CODE_SIGN_IDENTITY=- \
+            CODE_SIGNING_REQUIRED=NO
