@@ -224,6 +224,9 @@ struct TripDetailView: View {
                     tabPlaceholder(tab: viewModel.activeTab)
                         .frame(maxWidth: .infinity, minHeight: 300)
                 }
+            case .attachments:
+                AttachmentsTabView(tripId: trip.id)
+                    .frame(maxWidth: .infinity, minHeight: 300)
             default:
                 tabPlaceholder(tab: viewModel.activeTab)
                     .frame(maxWidth: .infinity, minHeight: 300)

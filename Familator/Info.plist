@@ -42,9 +42,13 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Familator uses the camera to capture photos and scan documents for trip attachments.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Familator accesses your photo library to attach photos to trips.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
