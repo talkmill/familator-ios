@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="tiptap-editor.css" />
+    <script src="tiptap-bundle.js"></script>
+  </head>
+  <body>
+    <div id="editor"></div>
+    <script>
+      ;(function () {
+        'use strict'
+
+        var T = window.TipTap
+        var editor = null
+
+        function post(handler, data) {
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers[handler]
+          ) {
+            window.webkit.messageHandlers[handler].postMessage(data)
+          }
+        }
+
+        function sendFormattingState() {
+          if (!editor) return
+          var state = {
+            bold: editor.isActive('bold'),
+            italic: editor.isActive('italic'),
+            underline: editor.isActive('underline'),
+            heading: 0,
+            bulletList: editor.isActive('bulletList'),
+            orderedList: editor.isActive('orderedList'),
+            color: editor.getAttributes('textStyle').color || '',
+            fontSize: editor.getAttributes('textStyle').fontSize || '',
+            canUndo: editor.can().undo(),
+            canRedo: editor.can().redo(),
+          }
+          for (var i = 1; i <= 3; i++) {
+            if (editor.isActive('heading', { level: i })) {
+              state.heading = i
+              break
+            }
+          }
+          post('formattingChanged', JSON.stringify(state))
+        }
+
+        editor = new T.Editor({
+          element: document.getElementById('editor'),
+          extensions: [
+            T.StarterKit.configure({
+              heading: { levels: [1, 2, 3] },
+            }),
+            T.Underline,
+            T.TextStyle,
+            T.Color,
+            T.FontSize,
+            T.Table.configure({ resizable: false }),
+            T.TableRow,
+            T.TableHeader,
+            T.TableCell,
+          ],
+          content: { type: 'doc', content: [{ type: 'paragraph' }] },
+          onUpdate: function (props) {
+            post('contentChanged', JSON.stringify(props.editor.getJSON()))
+            sendFormattingState()
+          },
+          onSelectionUpdate: function () {
+            sendFormattingState()
+          },
+          onBlur: function () {
+            post('editorBlurred', '')
+          },
+        })
+
+        window.editorSetContent = function (json) {
+          if (!editor) return
+          try {
+            var content = typeof json === 'string' ? JSON.parse(json) : json
+            editor.commands.setContent(content, false)
+          } catch (e) {
+            // ignore malformed JSON
+          }
+        }
+
+        window.editorGetContent = function () {
+          if (!editor) return '{}'
+          return JSON.stringify(editor.getJSON())
+        }
+
+        window.editorCommand = function (name, args) {
+          if (!editor) return
+          switch (name) {
+            case 'toggleBold':
+              editor.chain().focus().toggleBold().run()
+              break
+            case 'toggleItalic':
+              editor.chain().focus().toggleItalic().run()
+              break
+            case 'toggleUnderline':
+              editor.chain().focus().toggleUnderline().run()
+              break
+            case 'toggleHeading':
+              editor
+                .chain()
+                .focus()
+                .toggleHeading({ level: args && args.level ? args.level : 1 })
+                .run()
+              break
+            case 'setParagraph':
+              editor.chain().focus().setParagraph().run()
+              break
+            case 'setColor':
+              if (args && args.color) {
+                editor.chain().focus().setColor(args.color).run()
+              }
+              break
+            case 'unsetColor':
+              editor.chain().focus().unsetColor().run()
+              break
+            case 'setFontSize':
+              if (args && args.fontSize) {
+                editor.chain().focus().setMark('textStyle', { fontSize: args.fontSize }).run()
+              } else {
+                editor.chain().focus().unsetMark('textStyle').run()
+              }
+              break
+            case 'toggleBulletList':
+              editor.chain().focus().toggleBulletList().run()
+              break
+            case 'toggleOrderedList':
+              editor.chain().focus().toggleOrderedList().run()
+              break
+            case 'insertTable':
+              editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+              break
+            case 'addRowAfter':
+              editor.chain().focus().addRowAfter().run()
+              break
+            case 'addColumnAfter':
+              editor.chain().focus().addColumnAfter().run()
+              break
+            case 'deleteTable':
+              editor.chain().focus().deleteTable().run()
+              break
+            case 'undo':
+              editor.chain().focus().undo().run()
+              break
+            case 'redo':
+              editor.chain().focus().redo().run()
+              break
+            default:
+              break
+          }
+          sendFormattingState()
+        }
+
+        window.editorSetEditable = function (editable) {
+          if (editor) {
+            editor.setEditable(editable)
+          }
+        }
+
+        // Report content height to Swift so the WKWebView can size to fit
+        // inside the parent List (scrolling is disabled on the WKWebView).
+        var lastHeight = 0
+        function sendHeight() {
+          var h = document.body.scrollHeight
+          if (h !== lastHeight) {
+            lastHeight = h
+            post('heightChanged', h)
+          }
+        }
+        var heightObserver = new ResizeObserver(function () {
+          sendHeight()
+        })
+        heightObserver.observe(document.getElementById('editor'))
+
+        // Signal ready
+        post('editorReady', '')
+      })()
+    </script>
+  </body>
+</html>

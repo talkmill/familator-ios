@@ -1,0 +1,11 @@
+// Copy this file to Config.xcconfig and set your values.
+// Add Config.xcconfig to .gitignore so secrets are not committed.
+// Build SUPABASE_URL from parts so "//" is never parsed as a comment.
+
+SUPABASE_HOST = your-project.supabase.co
+SUPABASE_URL_SLASH = /
+SUPABASE_URL = https:$(SUPABASE_URL_SLASH)$(SUPABASE_URL_SLASH)$(SUPABASE_HOST)
+SUPABASE_ANON_KEY = your-anon-key
+GOOGLE_CLIENT_ID = your-ios-oauth-client-id.apps.googleusercontent.com
+GOOGLE_URL_SCHEME = com.googleusercontent.apps.your-ios-oauth-client-id
+GOOGLE_PLACES_API_KEY = your-google-places-api-key
