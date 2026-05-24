@@ -28,10 +28,12 @@ struct EditTodoView: View {
 
     private let todosService = TodosService()
     private let listsService = ListsService()
-    private let notesService = NotesService()
-    private let contextsService = ContextsService()
+    private let notesService: NotesServiceProtocol
+    private let contextsService: ContextsServiceProtocol
 
-    init(todo: Todo, onSaved: @escaping () -> Void) {
+    init(todo: Todo, onSaved: @escaping () -> Void, notesService: NotesServiceProtocol = NotesService(), contextsService: ContextsServiceProtocol = ContextsService()) {
+        self.notesService = notesService
+        self.contextsService = contextsService
         self.todo = todo
         self.onSaved = onSaved
         _title = State(initialValue: todo.title)

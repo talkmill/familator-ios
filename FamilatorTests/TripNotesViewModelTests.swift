@@ -1,6 +1,51 @@
 import XCTest
 @testable import Familator
 
+private enum TripNotesMockError: Error { case test }
+
+final class MockTripNotesService: NotesServiceProtocol {
+    var noteSummariesToReturn: [NoteSummary] = []
+    var noteToReturn: Note?
+    var createdNoteToReturn: Note?
+    var errorToThrow: Error?
+    var fetchSummariesCalls: [Int64] = []
+
+    func fetchNoteSummaries(listId: Int64) async throws -> [NoteSummary] {
+        fetchSummariesCalls.append(listId)
+        if let error = errorToThrow { throw error }
+        return noteSummariesToReturn
+    }
+
+    func fetchNoteSummaries(noteIds: [Int64]) async throws -> [NoteSummary] {
+        if let error = errorToThrow { throw error }
+        return noteSummariesToReturn.filter { noteIds.contains($0.id) }
+    }
+
+    func fetchNote(id: Int64) async throws -> Note? {
+        if let error = errorToThrow { throw error }
+        return noteToReturn
+    }
+
+    func createNote(listId: Int64, title: String, content: JSONValue) async throws -> Note {
+        if let error = errorToThrow { throw error }
+        guard let note = createdNoteToReturn else { throw TripNotesMockError.test }
+        return note
+    }
+
+    func updateNote(id: Int64, update: NoteUpdate) async throws {
+        if let error = errorToThrow { throw error }
+    }
+
+    func deleteNote(id: Int64) async throws {
+        if let error = errorToThrow { throw error }
+    }
+
+    func fetchLinkedTodos(noteId: Int64) async throws -> [LinkedTodoSummary] { [] }
+    func fetchLinkedNoteIds(todoId: Int64) async throws -> [Int64] { [] }
+    func replaceNoteLinks(todoId: Int64, listId: Int64, noteIds: [Int64]) async throws {}
+    func canWrite(list: FamilatorList, userId: UUID) async throws -> Bool { true }
+}
+
 @MainActor
 final class TripNotesViewModelTests: XCTestCase {
 
@@ -100,6 +145,38 @@ final class TripNotesViewModelTests: XCTestCase {
         }
 
         XCTAssertEqual(vm.selectedNote?.id, 200)
+    }
+
+    // MARK: - Service injection
+
+    func testLoadSetsSummariesFromService() async {
+        let mock = MockTripNotesService()
+        mock.noteSummariesToReturn = [
+            NoteSummary(id: 1, title: "Note A", updatedAt: Date()),
+            NoteSummary(id: 2, title: "Note B", updatedAt: Date()),
+        ]
+        let vm = TripNotesViewModel(listId: 10, notesService: mock)
+
+        await vm.load()
+
+        XCTAssertEqual(vm.noteSummaries.count, 2)
+        XCTAssertEqual(vm.noteSummaries.first?.title, "Note A")
+        XCTAssertEqual(mock.fetchSummariesCalls, [10])
+    }
+
+    func testLoadSetsErrorOnServiceFailure() async {
+        let mock = MockTripNotesService()
+        mock.errorToThrow = NSError(
+            domain: NSCocoaErrorDomain,
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "Server error"]
+        )
+        let vm = TripNotesViewModel(listId: 10, notesService: mock)
+
+        await vm.load()
+
+        XCTAssertTrue(vm.noteSummaries.isEmpty)
+        XCTAssertEqual(vm.errorMessage, "Server error")
     }
 
     // MARK: - Helpers

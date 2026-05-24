@@ -1,7 +1,12 @@
 import Foundation
 import Supabase
 
-final class ProfileService {
+protocol ProfileServiceProtocol {
+    func fetchProfile(userId: UUID) async throws -> Profile?
+    func updateProfile(userId: UUID, displayName: String?, avatarUrl: String?) async throws
+}
+
+final class ProfileService: ProfileServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchProfile(userId: UUID) async throws -> Profile? {

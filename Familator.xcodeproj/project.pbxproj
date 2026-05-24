@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		74E3A189D5A70904AE3F6C39 /* ProfileViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD87560F1C4DD1A1486B307A /* ProfileViewModelTests.swift */; };
+		99DD112075F415B80B266A64 /* DashboardServiceSeamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFFB26E54E730F60C459439 /* DashboardServiceSeamTests.swift */; };
+		C0ABFC0D0C72FAE313147BC1 /* ContextsServiceSeamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B3C22C45DBF4F46D6D29BB /* ContextsServiceSeamTests.swift */; };
+		E4F05A1CE0AB2EAB44C11B28 /* FeatureRequestServiceSeamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2B514A38F0FE9133ABEEF8 /* FeatureRequestServiceSeamTests.swift */; };
 		0267D169E4B059C5FF416D96 /* NotesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462807BF3A608649351D4BFB /* NotesViewModel.swift */; };
 		035854D3686BF29C11CAA364 /* TripItineraryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2507C9880FB55B9C6CF25C1 /* TripItineraryItem.swift */; };
 		03595A7E7064B5D96B96BCC9 /* PlaceColorsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50ED59570EE5BC74C5A1502 /* PlaceColorsTests.swift */; };
@@ -186,6 +190,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FD87560F1C4DD1A1486B307A /* ProfileViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModelTests.swift; sourceTree = "<group>"; };
+		DAFFB26E54E730F60C459439 /* DashboardServiceSeamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardServiceSeamTests.swift; sourceTree = "<group>"; };
+		33B3C22C45DBF4F46D6D29BB /* ContextsServiceSeamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextsServiceSeamTests.swift; sourceTree = "<group>"; };
+		AB2B514A38F0FE9133ABEEF8 /* FeatureRequestServiceSeamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureRequestServiceSeamTests.swift; sourceTree = "<group>"; };
 		027497FFAE348BC0DD3A2E19 /* TipTapCommandSink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipTapCommandSink.swift; sourceTree = "<group>"; };
 		0320E2BFDCD358F1793A4E1E /* FamilatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilatorApp.swift; sourceTree = "<group>"; };
 		034CF210FC0014CED637B73E /* Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workspace.swift; sourceTree = "<group>"; };
@@ -628,6 +636,10 @@
 				FB4D14B302ACE740F9AED9F5 /* TripsViewModelTests.swift */,
 				46415A33653FA47CB989381C /* UserFacingAsyncErrorTests.swift */,
 				A6C5FE51E246F9186E40D926 /* WorkspaceViewModelTests.swift */,
+				FD87560F1C4DD1A1486B307A /* ProfileViewModelTests.swift */,
+				DAFFB26E54E730F60C459439 /* DashboardServiceSeamTests.swift */,
+				33B3C22C45DBF4F46D6D29BB /* ContextsServiceSeamTests.swift */,
+				AB2B514A38F0FE9133ABEEF8 /* FeatureRequestServiceSeamTests.swift */,
 			);
 			path = FamilatorTests;
 			sourceTree = "<group>";
@@ -844,6 +856,10 @@
 				32C46446354B96BD08FF6289 /* TripsViewModelTests.swift in Sources */,
 				EF090146EF4C8A1EF7550E2B /* UserFacingAsyncErrorTests.swift in Sources */,
 				8ED81005FE8EB9A90B319761 /* WorkspaceViewModelTests.swift in Sources */,
+				74E3A189D5A70904AE3F6C39 /* ProfileViewModelTests.swift in Sources */,
+				99DD112075F415B80B266A64 /* DashboardServiceSeamTests.swift in Sources */,
+				C0ABFC0D0C72FAE313147BC1 /* ContextsServiceSeamTests.swift in Sources */,
+				E4F05A1CE0AB2EAB44C11B28 /* FeatureRequestServiceSeamTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

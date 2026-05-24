@@ -15,7 +15,12 @@ struct TodoDetailView: View {
     @State private var linkedNotes: [NoteSummary] = []
 
     private let todosService = TodosService()
-    private let notesService = NotesService()
+    private let notesService: NotesServiceProtocol
+
+    init(todoId: Int64, notesService: NotesServiceProtocol = NotesService()) {
+        self.todoId = todoId
+        self.notesService = notesService
+    }
 
     var body: some View {
         Group {

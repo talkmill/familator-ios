@@ -10,7 +10,7 @@ final class TripNotesViewModel: ObservableObject {
     @Published var isRefreshing = false
     @Published var errorMessage: String?
 
-    private let notesService = NotesService()
+    private let notesService: NotesServiceProtocol
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
     private var persistTask: Task<Void, Never>?
@@ -18,8 +18,9 @@ final class TripNotesViewModel: ObservableObject {
     private var pendingTitleForSave: String = ""
     private var pendingContent: JSONValue?
 
-    init(listId: Int64) {
+    init(listId: Int64, notesService: NotesServiceProtocol = NotesService()) {
         self.listId = listId
+        self.notesService = notesService
     }
 
     deinit {
