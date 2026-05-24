@@ -11,10 +11,11 @@ final class TripLegsViewModel: ObservableObject {
 
     private var loadSequence = 0
     private var initialLoadAttemptCompleted = false
-    private let legsService = TripLegsService()
+    private let legsService: TripLegsServiceProtocol
 
-    init(tripId: Int64) {
+    init(tripId: Int64, legsService: TripLegsServiceProtocol = TripLegsService()) {
         self.tripId = tripId
+        self.legsService = legsService
     }
 
     // MARK: - Load
