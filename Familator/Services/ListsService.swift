@@ -10,6 +10,12 @@ protocol ListsServiceProtocol {
     func reorderLists(userId: UUID, listIds: [Int64]) async throws
 }
 
+extension ListsServiceProtocol {
+    func createList(ownerId: UUID, name: String, description: String?, isInbox: Bool = false) async throws -> FamilatorList {
+        try await createList(ownerId: ownerId, name: name, description: description, isInbox: isInbox)
+    }
+}
+
 final class ListsService: ListsServiceProtocol {
     private let client = SupabaseManager.client
 

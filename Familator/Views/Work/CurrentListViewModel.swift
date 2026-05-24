@@ -14,9 +14,15 @@ final class CurrentListViewModel: ObservableObject {
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
 
-    private let listsService = ListsService()
-    private let todosService = TodosService()
-    private let currentListService = CurrentListService()
+    private let listsService: ListsServiceProtocol
+    private let todosService: TodosServiceProtocol
+    private let currentListService: CurrentListServiceProtocol
+
+    init(listsService: ListsServiceProtocol = ListsService(), todosService: TodosServiceProtocol = TodosService(), currentListService: CurrentListServiceProtocol = CurrentListService()) {
+        self.listsService = listsService
+        self.todosService = todosService
+        self.currentListService = currentListService
+    }
 
     func reset() {
         lists = []

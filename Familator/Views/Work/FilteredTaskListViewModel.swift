@@ -63,12 +63,15 @@ final class FilteredTaskListViewModel: ObservableObject {
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
 
-    private let listsService = ListsService()
-    private let todosService = TodosService()
-    private let currentListService = CurrentListService()
+    private let listsService: ListsServiceProtocol
+    private let todosService: TodosServiceProtocol
+    private let currentListService: CurrentListServiceProtocol
 
-    init(filterKey: String) {
+    init(filterKey: String, listsService: ListsServiceProtocol = ListsService(), todosService: TodosServiceProtocol = TodosService(), currentListService: CurrentListServiceProtocol = CurrentListService()) {
         self.filterKey = filterKey
+        self.listsService = listsService
+        self.todosService = todosService
+        self.currentListService = currentListService
     }
 
     func reset() {

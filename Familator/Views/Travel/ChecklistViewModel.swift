@@ -9,12 +9,13 @@ final class ChecklistViewModel: ObservableObject {
     @Published var isRefreshing = false
     @Published var errorMessage: String?
 
-    private let todosService = TodosService()
+    private let todosService: TodosServiceProtocol
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
 
-    init(listId: Int64) {
+    init(listId: Int64, todosService: TodosServiceProtocol = TodosService()) {
         self.listId = listId
+        self.todosService = todosService
     }
 
     var completedCount: Int {

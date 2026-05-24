@@ -1,7 +1,16 @@
 import Foundation
 import Supabase
 
-final class CurrentListService {
+protocol CurrentListServiceProtocol {
+    func fetchCurrentItems(userId: UUID) async throws -> [CurrentListItem]
+    func fetchOrderedTodoIds(userId: UUID) async throws -> [Int64]
+    func addTodo(userId: UUID, todoId: Int64) async throws
+    func removeTodo(userId: UUID, todoId: Int64) async throws
+    func clearCurrent(userId: UUID) async throws
+    func reorderCurrent(userId: UUID, todoIds: [Int64]) async throws
+}
+
+final class CurrentListService: CurrentListServiceProtocol {
     private let client = SupabaseManager.client
     private func userKey(_ userId: UUID) -> String { userId.uuidString.lowercased() }
 

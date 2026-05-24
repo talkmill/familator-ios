@@ -16,8 +16,12 @@ struct NotesView: View {
     @State private var todosForLinking: [Todo] = []
     @State private var linksSheetPresented = false
 
-    private let todosService = TodosService()
+    private let todosService: TodosServiceProtocol
     private let notesService = NotesService()
+
+    init(todosService: TodosServiceProtocol = TodosService()) {
+        self.todosService = todosService
+    }
 
     /// Approximate height for the List (picker + notes) so it doesn't scroll
     /// independently inside the outer ScrollView.

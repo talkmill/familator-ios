@@ -18,9 +18,15 @@ struct AddTodoView: View {
     @State private var newContextName = ""
     var onAdded: (Todo) -> Void
 
-    private let todosService = TodosService()
+    private let todosService: TodosServiceProtocol
     private let notesService = NotesService()
     private let contextsService = ContextsService()
+
+    init(listId: Int64, onAdded: @escaping (Todo) -> Void, todosService: TodosServiceProtocol = TodosService()) {
+        self.listId = listId
+        self.onAdded = onAdded
+        self.todosService = todosService
+    }
 
     var body: some View {
         NavigationStack {

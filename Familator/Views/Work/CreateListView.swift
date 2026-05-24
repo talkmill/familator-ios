@@ -9,7 +9,12 @@ struct CreateListView: View {
     @State private var isLoading = false
     var onCreated: (FamilatorList) -> Void
 
-    private let listsService = ListsService()
+    private let listsService: ListsServiceProtocol
+
+    init(onCreated: @escaping (FamilatorList) -> Void, listsService: ListsServiceProtocol = ListsService()) {
+        self.onCreated = onCreated
+        self.listsService = listsService
+    }
 
     var body: some View {
         NavigationStack {

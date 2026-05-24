@@ -26,14 +26,16 @@ struct EditTodoView: View {
     @State private var errorMessage: String?
     @State private var isSaving = false
 
-    private let todosService = TodosService()
-    private let listsService = ListsService()
+    private let todosService: TodosServiceProtocol
+    private let listsService: ListsServiceProtocol
     private let notesService = NotesService()
     private let contextsService = ContextsService()
 
-    init(todo: Todo, onSaved: @escaping () -> Void) {
+    init(todo: Todo, onSaved: @escaping () -> Void, todosService: TodosServiceProtocol = TodosService(), listsService: ListsServiceProtocol = ListsService()) {
         self.todo = todo
         self.onSaved = onSaved
+        self.todosService = todosService
+        self.listsService = listsService
         _title = State(initialValue: todo.title)
         _description = State(initialValue: todo.description ?? "")
         _selectedListId = State(initialValue: todo.listId)
