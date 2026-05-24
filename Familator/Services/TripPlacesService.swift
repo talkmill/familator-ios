@@ -62,7 +62,15 @@ struct TripPlaceUpdate: Encodable {
     }
 }
 
-final class TripPlacesService {
+protocol TripPlacesServiceProtocol {
+    func fetchPlaces(tripId: Int64) async throws -> [TripPlace]
+    func createPlace(payload: TripPlaceInsert) async throws -> TripPlace
+    func updatePlace(id: Int64, update: TripPlaceUpdate) async throws
+    func deletePlace(id: Int64) async throws
+    func reorderPlaces(tripId: Int64, placeIds: [Int64]) async throws -> [TripPlace]
+}
+
+final class TripPlacesService: TripPlacesServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchPlaces(tripId: Int64) async throws -> [TripPlace] {

@@ -1,7 +1,18 @@
 import Foundation
 import Supabase
 
-final class TripService {
+protocol TripServiceProtocol {
+    func fetchTrips(workspaceId: String) async throws -> [Trip]
+    func createTrip(ownerId: UUID, destination: String, workspaceId: String) async throws -> Trip
+    func deleteTrip(_ trip: Trip) async throws
+    func fetchTrip(id: Int64) async throws -> Trip?
+    func updateTripDestination(id: Int64, destination: String) async throws
+    func updateTripStartDate(id: Int64, startDate: String?) async throws
+    func updateTripEndDate(id: Int64, endDate: String?) async throws
+    func updateTripTransportMode(id: Int64, transportMode: TransportMode) async throws
+}
+
+final class TripService: TripServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchTrips(workspaceId: String) async throws -> [Trip] {

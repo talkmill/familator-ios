@@ -42,7 +42,15 @@ struct TripLegUpdate: Encodable {
     }
 }
 
-final class TripLegsService {
+protocol TripLegsServiceProtocol {
+    func fetchLegs(tripId: Int64) async throws -> [TripLeg]
+    func createLeg(payload: TripLegInsert) async throws -> TripLeg
+    func updateLeg(id: Int64, update: TripLegUpdate) async throws
+    func deleteLeg(id: Int64) async throws
+    func reorderLegs(tripId: Int64, legIds: [Int64]) async throws -> [TripLeg]
+}
+
+final class TripLegsService: TripLegsServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchLegs(tripId: Int64) async throws -> [TripLeg] {

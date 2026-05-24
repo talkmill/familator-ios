@@ -1,7 +1,16 @@
 import Foundation
 import Supabase
 
-final class ListsService {
+protocol ListsServiceProtocol {
+    func fetchLists(workspaceId: String, userId: UUID) async throws -> [FamilatorList]
+    func fetchList(id: Int64) async throws -> FamilatorList?
+    func createList(ownerId: UUID, name: String, description: String?, isInbox: Bool) async throws -> FamilatorList
+    func updateList(id: Int64, name: String?, description: String?, isShared: Bool?) async throws
+    func deleteList(id: Int64) async throws
+    func reorderLists(userId: UUID, listIds: [Int64]) async throws
+}
+
+final class ListsService: ListsServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchLists(workspaceId: String, userId: UUID) async throws -> [FamilatorList] {
