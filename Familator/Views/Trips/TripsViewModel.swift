@@ -13,7 +13,11 @@ final class TripsViewModel: ObservableObject {
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
 
-    private let tripService = TripService()
+    private let tripService: TripServiceProtocol
+
+    init(tripService: TripServiceProtocol = TripService()) {
+        self.tripService = tripService
+    }
 
     func reset() {
         trips = []

@@ -18,8 +18,8 @@ final class TripPlacesViewModel: ObservableObject {
 
     private var loadSequence = 0
     private var initialLoadAttemptCompleted = false
-    private let placesService = TripPlacesService()
-    private let legsService = TripLegsService()
+    private let placesService: TripPlacesServiceProtocol
+    private let legsService: TripLegsServiceProtocol
     private let googleService = GooglePlacesService()
 
     var isGoogleSearchAvailable: Bool { googleService.isAvailable }
@@ -29,8 +29,14 @@ final class TripPlacesViewModel: ObservableObject {
         return legs.first(where: { $0.id == legId })?.name
     }
 
-    init(tripId: Int64) {
+    init(
+        tripId: Int64,
+        placesService: TripPlacesServiceProtocol = TripPlacesService(),
+        legsService: TripLegsServiceProtocol = TripLegsService()
+    ) {
         self.tripId = tripId
+        self.placesService = placesService
+        self.legsService = legsService
     }
 
     // MARK: - Load

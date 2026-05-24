@@ -1,7 +1,16 @@
 import Foundation
 import Supabase
 
-final class TripAttachmentsService {
+protocol TripAttachmentsServiceProtocol {
+    func fetchAttachments(tripId: Int64) async throws -> [TripAttachment]
+    func uploadAttachment(tripId: Int64, fileData: Data, filename: String, mimeType: String, category: AttachmentCategory) async throws -> TripAttachment
+    func updateAttachment(id: Int64, update: TripAttachmentUpdate) async throws
+    func deleteAttachment(_ attachment: TripAttachment) async throws
+    func createSignedURL(storagePath: String) async throws -> URL
+    func downloadFile(storagePath: String) async throws -> Data
+}
+
+final class TripAttachmentsService: TripAttachmentsServiceProtocol {
     private let client = SupabaseManager.client
     private let bucket = "trip-attachments"
 

@@ -1,7 +1,67 @@
 import XCTest
 @testable import Familator
 
+private enum MockError: Error { case notConfigured }
+
+final class MockTripAttachmentsService: TripAttachmentsServiceProtocol {
+    var attachmentsToReturn: [TripAttachment] = []
+    var uploadedAttachmentToReturn: TripAttachment?
+    var signedURLToReturn: URL = URL(string: "https://example.com/signed")!
+    var downloadDataToReturn: Data = Data()
+    var errorToThrow: Error?
+    var fetchAttachmentsCalls: [Int64] = []
+    var uploadCalls: [(tripId: Int64, filename: String, mimeType: String, category: AttachmentCategory)] = []
+    var updateCalls: [(id: Int64, update: TripAttachmentUpdate)] = []
+    var deleteCalls: [TripAttachment] = []
+    var signedURLCalls: [String] = []
+    var downloadCalls: [String] = []
+
+    func fetchAttachments(tripId: Int64) async throws -> [TripAttachment] {
+        fetchAttachmentsCalls.append(tripId)
+        if let error = errorToThrow { throw error }
+        return attachmentsToReturn
+    }
+
+    func uploadAttachment(tripId: Int64, fileData: Data, filename: String, mimeType: String, category: AttachmentCategory) async throws -> TripAttachment {
+        uploadCalls.append((tripId, filename, mimeType, category))
+        if let error = errorToThrow { throw error }
+        guard let attachment = uploadedAttachmentToReturn else { XCTFail("uploadedAttachmentToReturn not set"); throw MockError.notConfigured }
+        return attachment
+    }
+
+    func updateAttachment(id: Int64, update: TripAttachmentUpdate) async throws {
+        updateCalls.append((id, update))
+        if let error = errorToThrow { throw error }
+    }
+
+    func deleteAttachment(_ attachment: TripAttachment) async throws {
+        deleteCalls.append(attachment)
+        if let error = errorToThrow { throw error }
+    }
+
+    func createSignedURL(storagePath: String) async throws -> URL {
+        signedURLCalls.append(storagePath)
+        if let error = errorToThrow { throw error }
+        return signedURLToReturn
+    }
+
+    func downloadFile(storagePath: String) async throws -> Data {
+        downloadCalls.append(storagePath)
+        if let error = errorToThrow { throw error }
+        return downloadDataToReturn
+    }
+}
+
+@MainActor
 final class AttachmentsViewModelTests: XCTestCase {
+    private var sut: AttachmentsViewModel!
+    private var mockService: MockTripAttachmentsService!
+
+    override func setUp() {
+        super.setUp()
+        mockService = MockTripAttachmentsService()
+        sut = AttachmentsViewModel(tripId: 1, service: mockService)
+    }
 
     // MARK: - Helpers
 
@@ -35,31 +95,27 @@ final class AttachmentsViewModelTests: XCTestCase {
 
     // MARK: - Initial state
 
-    @MainActor
     func testInitialState() {
-        let vm = AttachmentsViewModel(tripId: 1)
-        XCTAssertTrue(vm.attachments.isEmpty)
-        XCTAssertFalse(vm.isBlockingLoad)
-        XCTAssertFalse(vm.isRefreshing)
-        XCTAssertFalse(vm.isUploading)
-        XCTAssertNil(vm.errorMessage)
-        XCTAssertEqual(vm.imageCount, 0)
-        XCTAssertEqual(vm.documentCount, 0)
+        XCTAssertTrue(sut.attachments.isEmpty)
+        XCTAssertFalse(sut.isBlockingLoad)
+        XCTAssertFalse(sut.isRefreshing)
+        XCTAssertFalse(sut.isUploading)
+        XCTAssertNil(sut.errorMessage)
+        XCTAssertEqual(sut.imageCount, 0)
+        XCTAssertEqual(sut.documentCount, 0)
     }
 
     // MARK: - Computed counts
 
-    @MainActor
     func testImageAndDocumentCounts() {
-        let vm = AttachmentsViewModel(tripId: 1)
-        vm.attachments = [
+        sut.attachments = [
             makeAttachment(id: 1, mimeType: "image/jpeg"),
             makeAttachment(id: 2, mimeType: "image/png"),
             makeAttachment(id: 3, mimeType: "application/pdf"),
             makeAttachment(id: 4, mimeType: "text/plain"),
         ]
-        XCTAssertEqual(vm.imageCount, 2)
-        XCTAssertEqual(vm.documentCount, 2)
+        XCTAssertEqual(sut.imageCount, 2)
+        XCTAssertEqual(sut.documentCount, 2)
     }
 
     // MARK: - TripAttachment model
@@ -97,18 +153,69 @@ final class AttachmentsViewModelTests: XCTestCase {
         XCTAssertEqual(AttachmentCategory.other.systemImage, "doc")
     }
 
-    // MARK: - Delete (optimistic)
+    // MARK: - Load via mock service
 
-    @MainActor
-    func testDeleteRemovesFromArray() {
-        let vm = AttachmentsViewModel(tripId: 1)
+    func testLoadFetchesAttachmentsFromService() async {
         let a1 = makeAttachment(id: 1)
         let a2 = makeAttachment(id: 2)
-        vm.attachments = [a1, a2]
+        mockService.attachmentsToReturn = [a1, a2]
 
-        // Simulate optimistic removal (we can't call the real delete without a backend)
-        vm.attachments.removeAll { $0.id == a1.id }
-        XCTAssertEqual(vm.attachments.count, 1)
-        XCTAssertEqual(vm.attachments.first?.id, a2.id)
+        await sut.load()
+
+        XCTAssertEqual(sut.attachments.count, 2)
+        XCTAssertEqual(mockService.fetchAttachmentsCalls, [1])
+        XCTAssertNil(sut.errorMessage)
+    }
+
+    func testLoadSetsErrorOnFailure() async {
+        mockService.errorToThrow = NSError(domain: "test", code: 42)
+
+        await sut.load()
+
+        XCTAssertTrue(sut.attachments.isEmpty)
+        XCTAssertNotNil(sut.errorMessage)
+    }
+
+    // MARK: - Delete via mock service
+
+    func testDeleteCallsServiceAndRemovesFromArray() async {
+        let a1 = makeAttachment(id: 1)
+        let a2 = makeAttachment(id: 2)
+        sut.attachments = [a1, a2]
+
+        await sut.delete(a1)
+
+        XCTAssertEqual(sut.attachments.count, 1)
+        XCTAssertEqual(sut.attachments.first?.id, a2.id)
+        XCTAssertEqual(mockService.deleteCalls.count, 1)
+        XCTAssertEqual(mockService.deleteCalls[0].id, a1.id)
+    }
+
+    func testDeleteRestoresOnFailure() async {
+        let a1 = makeAttachment(id: 1)
+        let a2 = makeAttachment(id: 2)
+        sut.attachments = [a1, a2]
+        mockService.errorToThrow = NSError(domain: "test", code: 1)
+
+        await sut.delete(a1)
+
+        XCTAssertEqual(sut.attachments.count, 2)
+        XCTAssertNotNil(sut.errorMessage)
+    }
+
+    // MARK: - Upload via mock service
+
+    func testUploadInsertsAtFront() async {
+        let existing = makeAttachment(id: 1)
+        sut.attachments = [existing]
+        let uploaded = makeAttachment(id: 2)
+        mockService.uploadedAttachmentToReturn = uploaded
+
+        await sut.upload(data: Data(), filename: "test.jpg", mimeType: "image/jpeg")
+
+        XCTAssertEqual(sut.attachments.count, 2)
+        XCTAssertEqual(sut.attachments.first?.id, uploaded.id)
+        XCTAssertEqual(mockService.uploadCalls.count, 1)
+        XCTAssertEqual(mockService.uploadCalls[0].filename, "test.jpg")
     }
 }
