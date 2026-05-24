@@ -11,7 +11,11 @@ struct ProfileView: View {
     @State private var isSubmittingFeatureRequest = false
     @State private var featureRequestError: String?
     @State private var featureRequestSuccess: String?
-    private let featureRequestService = FeatureRequestService()
+    private let featureRequestService: FeatureRequestServiceProtocol
+
+    init(featureRequestService: FeatureRequestServiceProtocol = FeatureRequestService()) {
+        self.featureRequestService = featureRequestService
+    }
 
     var body: some View {
         NavigationStack {

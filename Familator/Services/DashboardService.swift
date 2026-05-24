@@ -1,7 +1,18 @@
 import Foundation
 import Supabase
 
-final class DashboardService {
+struct DashboardFavoriteInput {
+    let itemType: String
+    let listId: Int64?
+    let filterKey: String?
+}
+
+protocol DashboardServiceProtocol {
+    func fetchFavorites(userId: UUID) async throws -> [DashboardFavoriteRow]
+    func setFavorites(userId: UUID, favorites: [DashboardFavoriteInput]) async throws
+}
+
+final class DashboardService: DashboardServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchFavorites(userId: UUID) async throws -> [DashboardFavoriteRow] {
@@ -15,7 +26,7 @@ final class DashboardService {
         return rows
     }
 
-    func setFavorites(userId: UUID, favorites: [(itemType: String, listId: Int64?, filterKey: String?)]) async throws {
+    func setFavorites(userId: UUID, favorites: [DashboardFavoriteInput]) async throws {
         try await client
             .from("dashboard_favorites")
             .delete()

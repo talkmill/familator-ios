@@ -1,7 +1,11 @@
 import Foundation
 import Supabase
 
-final class FeatureRequestService {
+protocol FeatureRequestServiceProtocol {
+    func submit(userId: UUID, title: String, description: String?) async throws
+}
+
+final class FeatureRequestService: FeatureRequestServiceProtocol {
     private let client = SupabaseManager.client
 
     private struct Payload: Encodable {

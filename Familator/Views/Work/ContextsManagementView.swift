@@ -9,7 +9,11 @@ struct ContextsManagementView: View {
     @State private var errorMessage: String?
     @State private var isLoading = false
 
-    private let contextsService = ContextsService()
+    private let contextsService: ContextsServiceProtocol
+
+    init(contextsService: ContextsServiceProtocol = ContextsService()) {
+        self.contextsService = contextsService
+    }
 
     var body: some View {
         List {

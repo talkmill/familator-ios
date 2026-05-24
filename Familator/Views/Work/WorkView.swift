@@ -20,11 +20,12 @@ struct WorkView: View {
     @State private var favoriteUpdatesInFlight: Set<Int64> = []
     @State private var favoritesErrorMessage: String?
     private let pollIntervalNanoseconds: UInt64 = 30_000_000_000
-    private let dashboardService = DashboardService()
+    private let dashboardService: DashboardServiceProtocol
 
-    init(selectedListId: Int64? = nil, selectedFilter: String? = nil) {
+    init(selectedListId: Int64? = nil, selectedFilter: String? = nil, dashboardService: DashboardServiceProtocol = DashboardService()) {
         self.selectedListId = selectedListId
         self.selectedFilter = selectedFilter
+        self.dashboardService = dashboardService
     }
 
     var body: some View {
@@ -206,13 +207,13 @@ struct WorkView: View {
         do {
             let existing = try await dashboardService.fetchFavorites(userId: userId)
             let activeListIds = Set(workLists.lists.map(\.id))
-            var normalized: [(itemType: String, listId: Int64?, filterKey: String?)] = existing.compactMap { row in
+            var normalized: [DashboardFavoriteInput] = existing.compactMap { row in
                 if row.itemType == DashboardFavoriteRow.typeList {
                     guard let id = row.listId, activeListIds.contains(id) else { return nil }
-                    return (DashboardFavoriteRow.typeList, id, nil)
+                    return DashboardFavoriteInput(itemType: DashboardFavoriteRow.typeList, listId: id, filterKey: nil)
                 }
                 if row.itemType == DashboardFavoriteRow.typeFilter, let key = row.filterKey {
-                    return (DashboardFavoriteRow.typeFilter, nil, key)
+                    return DashboardFavoriteInput(itemType: DashboardFavoriteRow.typeFilter, listId: nil, filterKey: key)
                 }
                 return nil
             }
@@ -224,7 +225,7 @@ struct WorkView: View {
                     favoritesErrorMessage = "You can only pin up to 5 favorites."
                     return
                 }
-                normalized.append((DashboardFavoriteRow.typeList, listId, nil))
+                normalized.append(DashboardFavoriteInput(itemType: DashboardFavoriteRow.typeList, listId: listId, filterKey: nil))
             }
 
             try await dashboardService.setFavorites(userId: userId, favorites: normalized)
