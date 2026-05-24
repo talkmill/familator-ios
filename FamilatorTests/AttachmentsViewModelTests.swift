@@ -218,4 +218,14 @@ final class AttachmentsViewModelTests: XCTestCase {
         XCTAssertEqual(mockService.uploadCalls.count, 1)
         XCTAssertEqual(mockService.uploadCalls[0].filename, "test.jpg")
     }
+
+    func testUploadSetsErrorOnFailure() async {
+        mockService.errorToThrow = NSError(domain: "test", code: 1)
+
+        await sut.upload(data: Data(), filename: "fail.jpg", mimeType: "image/jpeg")
+
+        XCTAssertTrue(sut.attachments.isEmpty)
+        XCTAssertNotNil(sut.errorMessage)
+        XCTAssertFalse(sut.isUploading)
+    }
 }
