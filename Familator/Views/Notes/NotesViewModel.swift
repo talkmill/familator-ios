@@ -12,8 +12,8 @@ final class NotesViewModel: ObservableObject {
     @Published var canWriteSelectedList = false
     @Published var errorMessage: String?
 
-    private let listsService = ListsService()
-    private let notesService = NotesService()
+    private let listsService: ListsServiceProtocol
+    private let notesService: NotesServiceProtocol
     private var cachedUserId: String?
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
@@ -21,6 +21,11 @@ final class NotesViewModel: ObservableObject {
     private var titlePersistTask: Task<Void, Never>?
     private var pendingTitleForSave: String = ""
     private var pendingContent: JSONValue?
+
+    init(listsService: ListsServiceProtocol = ListsService(), notesService: NotesServiceProtocol = NotesService()) {
+        self.listsService = listsService
+        self.notesService = notesService
+    }
 
     deinit {
         persistTask?.cancel()

@@ -105,7 +105,15 @@ struct TripItineraryItemUpdate: Encodable {
     }
 }
 
-final class TripItineraryService {
+protocol TripItineraryServiceProtocol {
+    func fetchItems(tripId: Int64) async throws -> [TripItineraryItem]
+    func createItem(payload: TripItineraryItemInsert) async throws -> TripItineraryItem
+    func updateItem(id: Int64, update: TripItineraryItemUpdate) async throws
+    func deleteItem(id: Int64) async throws
+    func reorderItems(tripId: Int64, itemIds: [Int64]) async throws -> [TripItineraryItem]
+}
+
+final class TripItineraryService: TripItineraryServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchItems(tripId: Int64) async throws -> [TripItineraryItem] {

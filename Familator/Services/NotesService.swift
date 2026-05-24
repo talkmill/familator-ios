@@ -23,7 +23,20 @@ struct NoteUpdate: Encodable {
     }
 }
 
-final class NotesService {
+protocol NotesServiceProtocol {
+    func fetchNoteSummaries(listId: Int64) async throws -> [NoteSummary]
+    func fetchNoteSummaries(noteIds: [Int64]) async throws -> [NoteSummary]
+    func fetchNote(id: Int64) async throws -> Note?
+    func createNote(listId: Int64, title: String, content: JSONValue) async throws -> Note
+    func updateNote(id: Int64, update: NoteUpdate) async throws
+    func deleteNote(id: Int64) async throws
+    func fetchLinkedTodos(noteId: Int64) async throws -> [LinkedTodoSummary]
+    func fetchLinkedNoteIds(todoId: Int64) async throws -> [Int64]
+    func replaceNoteLinks(todoId: Int64, listId: Int64, noteIds: [Int64]) async throws
+    func canWrite(list: FamilatorList, userId: UUID) async throws -> Bool
+}
+
+final class NotesService: NotesServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchNoteSummaries(listId: Int64) async throws -> [NoteSummary] {
