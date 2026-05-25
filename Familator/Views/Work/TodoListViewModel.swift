@@ -15,12 +15,15 @@ final class TodoListViewModel: ObservableObject {
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
 
-    private let listsService = ListsService()
-    private let todosService = TodosService()
-    private let currentListService = CurrentListService()
+    private let listsService: ListsServiceProtocol
+    private let todosService: TodosServiceProtocol
+    private let currentListService: CurrentListServiceProtocol
 
-    init(listId: Int64) {
+    init(listId: Int64, listsService: ListsServiceProtocol = ListsService(), todosService: TodosServiceProtocol = TodosService(), currentListService: CurrentListServiceProtocol = CurrentListService()) {
         self.listId = listId
+        self.listsService = listsService
+        self.todosService = todosService
+        self.currentListService = currentListService
     }
 
     func reset() {

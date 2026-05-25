@@ -14,11 +14,12 @@ struct TodoDetailView: View {
     @State private var addingSubtask = false
     @State private var linkedNotes: [NoteSummary] = []
 
-    private let todosService = TodosService()
+    private let todosService: TodosServiceProtocol
     private let notesService: NotesServiceProtocol
 
-    init(todoId: Int64, notesService: NotesServiceProtocol = NotesService()) {
+    init(todoId: Int64, todosService: TodosServiceProtocol = TodosService(), notesService: NotesServiceProtocol = NotesService()) {
         self.todoId = todoId
+        self.todosService = todosService
         self.notesService = notesService
     }
 

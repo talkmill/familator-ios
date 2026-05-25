@@ -9,13 +9,14 @@ struct EditListView: View {
     @State private var errorMessage: String?
     var onDone: () -> Void
 
-    private let listsService = ListsService()
+    private let listsService: ListsServiceProtocol
 
-    init(list: FamilatorList, onDone: @escaping () -> Void) {
+    init(list: FamilatorList, onDone: @escaping () -> Void, listsService: ListsServiceProtocol = ListsService()) {
         self.list = list
         _name = State(initialValue: list.name)
         _description = State(initialValue: list.description ?? "")
         self.onDone = onDone
+        self.listsService = listsService
     }
 
     var body: some View {

@@ -16,10 +16,11 @@ struct NotesView: View {
     @State private var todosForLinking: [Todo] = []
     @State private var linksSheetPresented = false
 
-    private let todosService = TodosService()
+    private let todosService: TodosServiceProtocol
     private let notesService: NotesServiceProtocol
 
-    init(notesService: NotesServiceProtocol = NotesService()) {
+    init(todosService: TodosServiceProtocol = TodosService(), notesService: NotesServiceProtocol = NotesService()) {
+        self.todosService = todosService
         self.notesService = notesService
         _viewModel = StateObject(wrappedValue: NotesViewModel(notesService: notesService))
     }

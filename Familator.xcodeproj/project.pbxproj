@@ -177,6 +177,12 @@
 		FB00E30FF1A0CF98B2E84013 /* DMSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4944B77C045A295AE351BE23 /* DMSans-Regular.ttf */; };
 		FB48DC914237B21E812BF297 /* tiptap-editor.html in Resources */ = {isa = PBXBuildFile; fileRef = 5ECFD0C71AD300BE283F228F /* tiptap-editor.html */; };
 		FBC6211BE3322C2EDE9A6929 /* InlineErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCFA9744E1707D6F48427B2B /* InlineErrorView.swift */; };
+		1E83F7F276D1772BB4EA1A45 /* MockTodosService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E3CEA4509B9EA719979118 /* MockTodosService.swift */; };
+		BEA950819C4F5932F75B2DEB /* MockListsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBC459A63381394C8BF3E28 /* MockListsService.swift */; };
+		967C1DB40B8A5ECF7B16384F /* MockCurrentListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40256858D097CFA2E87F84F6 /* MockCurrentListService.swift */; };
+		FD2AFCDE553041EC5C930672 /* TodoListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A35232CC2AA998727FD437B /* TodoListViewModelTests.swift */; };
+		B372C6A5F12F2D9CADB1B01D /* CurrentListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC6903DEED5E3CC61CCB854 /* CurrentListViewModelTests.swift */; };
+		F591D8046EAB23674AD14603 /* WorkListsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2430F2C47E47A204F05E2B /* WorkListsViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -359,6 +365,12 @@
 		FC5EC71C553069E27BA945EF /* CalendarDayChangeRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayChangeRefresh.swift; sourceTree = "<group>"; };
 		FD24B605220D9C541CAA3398 /* TripLegsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripLegsServiceTests.swift; sourceTree = "<group>"; };
 		FEDC204622A3E60DB2190BAA /* TaskContextViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskContextViews.swift; sourceTree = "<group>"; };
+		39E3CEA4509B9EA719979118 /* MockTodosService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTodosService.swift; sourceTree = "<group>"; };
+		BEBC459A63381394C8BF3E28 /* MockListsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockListsService.swift; sourceTree = "<group>"; };
+		40256858D097CFA2E87F84F6 /* MockCurrentListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCurrentListService.swift; sourceTree = "<group>"; };
+		1A35232CC2AA998727FD437B /* TodoListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListViewModelTests.swift; sourceTree = "<group>"; };
+		CDC6903DEED5E3CC61CCB854 /* CurrentListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentListViewModelTests.swift; sourceTree = "<group>"; };
+		7C2430F2C47E47A204F05E2B /* WorkListsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkListsViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -636,6 +648,10 @@
 				FB4D14B302ACE740F9AED9F5 /* TripsViewModelTests.swift */,
 				46415A33653FA47CB989381C /* UserFacingAsyncErrorTests.swift */,
 				A6C5FE51E246F9186E40D926 /* WorkspaceViewModelTests.swift */,
+				AA3E59EE6B48F56FBE3538B8 /* Mocks */,
+				1A35232CC2AA998727FD437B /* TodoListViewModelTests.swift */,
+				CDC6903DEED5E3CC61CCB854 /* CurrentListViewModelTests.swift */,
+				7C2430F2C47E47A204F05E2B /* WorkListsViewModelTests.swift */,
 				FD87560F1C4DD1A1486B307A /* ProfileViewModelTests.swift */,
 				DAFFB26E54E730F60C459439 /* DashboardServiceSeamTests.swift */,
 				33B3C22C45DBF4F46D6D29BB /* ContextsServiceSeamTests.swift */,
@@ -718,6 +734,16 @@
 				9F4E93DA34A9199FFA963845 /* Inter-SemiBold.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		AA3E59EE6B48F56FBE3538B8 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				39E3CEA4509B9EA719979118 /* MockTodosService.swift */,
+				BEBC459A63381394C8BF3E28 /* MockListsService.swift */,
+				40256858D097CFA2E87F84F6 /* MockCurrentListService.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -856,6 +882,12 @@
 				32C46446354B96BD08FF6289 /* TripsViewModelTests.swift in Sources */,
 				EF090146EF4C8A1EF7550E2B /* UserFacingAsyncErrorTests.swift in Sources */,
 				8ED81005FE8EB9A90B319761 /* WorkspaceViewModelTests.swift in Sources */,
+				1E83F7F276D1772BB4EA1A45 /* MockTodosService.swift in Sources */,
+				BEA950819C4F5932F75B2DEB /* MockListsService.swift in Sources */,
+				967C1DB40B8A5ECF7B16384F /* MockCurrentListService.swift in Sources */,
+				FD2AFCDE553041EC5C930672 /* TodoListViewModelTests.swift in Sources */,
+				B372C6A5F12F2D9CADB1B01D /* CurrentListViewModelTests.swift in Sources */,
+				F591D8046EAB23674AD14603 /* WorkListsViewModelTests.swift in Sources */,
 				74E3A189D5A70904AE3F6C39 /* ProfileViewModelTests.swift in Sources */,
 				99DD112075F415B80B266A64 /* DashboardServiceSeamTests.swift in Sources */,
 				C0ABFC0D0C72FAE313147BC1 /* ContextsServiceSeamTests.swift in Sources */,

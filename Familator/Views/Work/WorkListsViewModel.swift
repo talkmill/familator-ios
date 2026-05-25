@@ -11,7 +11,11 @@ final class WorkListsViewModel: ObservableObject {
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
 
-    private let listsService = ListsService()
+    private let listsService: ListsServiceProtocol
+
+    init(listsService: ListsServiceProtocol = ListsService()) {
+        self.listsService = listsService
+    }
 
     func reset() {
         lists = []

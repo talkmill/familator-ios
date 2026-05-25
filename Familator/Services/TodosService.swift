@@ -76,7 +76,22 @@ struct TodoUpdate: Encodable {
     }
 }
 
-final class TodosService {
+protocol TodosServiceProtocol {
+    func fetchTodos(listId: Int64) async throws -> [Todo]
+    func fetchTodos(listIds: [Int64]) async throws -> [Todo]
+    func fetchTodo(id: Int64) async throws -> Todo?
+    func fetchChecklistTodos(listId: Int64) async throws -> [Todo]
+    func createTodo(listId: Int64, title: String, description: String?, priority: String?, dueDate: Date?, plannedDate: Date?, noteIds: [Int64]?, kind: String?) async throws -> Todo
+    func updateTodo(id: Int64, update: TodoUpdate) async throws
+    func deleteTodo(id: Int64) async throws
+    func fetchSubtasks(todoId: Int64) async throws -> [Subtask]
+    func addSubtask(todoId: Int64, title: String) async throws -> Subtask
+    func updateSubtask(id: Int64, title: String?, status: String?) async throws
+    func deleteSubtask(id: Int64) async throws
+}
+
+
+final class TodosService: TodosServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchTodos(listId: Int64) async throws -> [Todo] {

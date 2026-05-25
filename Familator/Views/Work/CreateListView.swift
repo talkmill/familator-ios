@@ -9,7 +9,12 @@ struct CreateListView: View {
     @State private var isLoading = false
     var onCreated: (FamilatorList) -> Void
 
-    private let listsService = ListsService()
+    private let listsService: ListsServiceProtocol
+
+    init(onCreated: @escaping (FamilatorList) -> Void, listsService: ListsServiceProtocol = ListsService()) {
+        self.onCreated = onCreated
+        self.listsService = listsService
+    }
 
     var body: some View {
         NavigationStack {
@@ -45,7 +50,7 @@ struct CreateListView: View {
         isLoading = true
         defer { isLoading = false }
         do {
-            let list = try await listsService.createList(ownerId: userId, name: name.trimmingCharacters(in: .whitespaces), description: description.isEmpty ? nil : description)
+            let list = try await listsService.createList(ownerId: userId, name: name.trimmingCharacters(in: .whitespaces), description: description.isEmpty ? nil : description, isInbox: false)
             onCreated(list)
         } catch {
             errorMessage = error.localizedDescription
