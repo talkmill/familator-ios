@@ -15,12 +15,22 @@ final class RouteTabViewModel: ObservableObject {
     @Published var isOptimizing = false
     var showToast: ((ToastVariant, String) -> Void)?
 
-    private let tripService = TripService()
-    private let legsService = TripLegsService()
-    private let placesService = TripPlacesService()
+    private let tripService: TripServiceProtocol
+    private let legsService: TripLegsServiceProtocol
+    private let placesService: TripPlacesServiceProtocol
     private let osrmService = OSRMService.shared
 
     private var loadSequence = 0
+
+    init(
+        tripService: TripServiceProtocol = TripService(),
+        legsService: TripLegsServiceProtocol = TripLegsService(),
+        placesService: TripPlacesServiceProtocol = TripPlacesService()
+    ) {
+        self.tripService = tripService
+        self.legsService = legsService
+        self.placesService = placesService
+    }
 
     var geocodedPlaces: [TripPlace] {
         places.filter { $0.coordinate != nil }

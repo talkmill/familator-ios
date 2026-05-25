@@ -1,5 +1,8 @@
 import Foundation
+import XCTest
 @testable import Familator
+
+private enum MockError: Error { case notConfigured }
 
 final class MockTodosService: TodosServiceProtocol {
     var fetchTodosListHandler: ((Int64) async throws -> [Todo])?
@@ -43,7 +46,8 @@ final class MockTodosService: TodosServiceProtocol {
     func createTodo(listId: Int64, title: String, description: String?, priority: String?, dueDate: Date?, plannedDate: Date?, noteIds: [Int64]?, kind: String?) async throws -> Todo {
         createTodoCalls.append((listId, title, kind))
         guard let handler = createTodoHandler else {
-            fatalError("createTodoHandler not configured")
+            XCTFail("createTodoHandler not configured")
+            throw MockError.notConfigured
         }
         return try await handler(listId, title, description, priority, dueDate, plannedDate, noteIds, kind)
     }
@@ -64,7 +68,8 @@ final class MockTodosService: TodosServiceProtocol {
 
     func addSubtask(todoId: Int64, title: String) async throws -> Subtask {
         guard let handler = addSubtaskHandler else {
-            fatalError("addSubtaskHandler not configured")
+            XCTFail("addSubtaskHandler not configured")
+            throw MockError.notConfigured
         }
         return try await handler(todoId, title)
     }

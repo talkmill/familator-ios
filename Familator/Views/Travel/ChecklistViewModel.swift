@@ -70,6 +70,7 @@ final class ChecklistViewModel: ObservableObject {
                 priority: nil,
                 dueDate: nil,
                 plannedDate: nil,
+                noteIds: nil,
                 kind: kind.rawValue
             )
             todos.append(todo)

@@ -10,13 +10,14 @@ final class AttachmentsViewModel: ObservableObject {
     @Published var isUploading = false
     @Published var errorMessage: String?
 
-    private let service = TripAttachmentsService()
+    private let service: TripAttachmentsServiceProtocol
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
     private var signedURLCache: [String: (url: URL, expiry: Date)] = [:]
 
-    init(tripId: Int64) {
+    init(tripId: Int64, service: TripAttachmentsServiceProtocol = TripAttachmentsService()) {
         self.tripId = tripId
+        self.service = service
     }
 
     var imageCount: Int {

@@ -3,7 +3,7 @@ import SwiftUI
 struct NotesView: View {
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var workspaceVM: WorkspaceViewModel
-    @StateObject private var viewModel = NotesViewModel()
+    @StateObject private var viewModel: NotesViewModel
 
     @StateObject private var formattingState = TipTapFormattingState()
     @StateObject private var commandSink = TipTapCommandSink()
@@ -17,10 +17,12 @@ struct NotesView: View {
     @State private var linksSheetPresented = false
 
     private let todosService: TodosServiceProtocol
-    private let notesService = NotesService()
+    private let notesService: NotesServiceProtocol
 
-    init(todosService: TodosServiceProtocol = TodosService()) {
+    init(todosService: TodosServiceProtocol = TodosService(), notesService: NotesServiceProtocol = NotesService()) {
         self.todosService = todosService
+        self.notesService = notesService
+        _viewModel = StateObject(wrappedValue: NotesViewModel(notesService: notesService))
     }
 
     /// Approximate height for the List (picker + notes) so it doesn't scroll

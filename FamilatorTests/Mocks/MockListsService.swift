@@ -1,5 +1,8 @@
 import Foundation
+import XCTest
 @testable import Familator
+
+private enum MockError: Error { case notConfigured }
 
 final class MockListsService: ListsServiceProtocol {
     var fetchListsHandler: ((String, UUID) async throws -> [FamilatorList])?
@@ -11,6 +14,7 @@ final class MockListsService: ListsServiceProtocol {
 
     var fetchListsCalls: [(workspaceId: String, userId: UUID)] = []
     var fetchListCalls: [Int64] = []
+    var createListCalls: [(ownerId: UUID, name: String)] = []
     var deleteListCalls: [Int64] = []
 
     func fetchLists(workspaceId: String, userId: UUID) async throws -> [FamilatorList] {
@@ -24,8 +28,10 @@ final class MockListsService: ListsServiceProtocol {
     }
 
     func createList(ownerId: UUID, name: String, description: String?, isInbox: Bool) async throws -> FamilatorList {
+        createListCalls.append((ownerId, name))
         guard let handler = createListHandler else {
-            fatalError("createListHandler not configured")
+            XCTFail("createListHandler not configured")
+            throw MockError.notConfigured
         }
         return try await handler(ownerId, name, description, isInbox)
     }

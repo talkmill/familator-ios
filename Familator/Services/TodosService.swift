@@ -90,11 +90,6 @@ protocol TodosServiceProtocol {
     func deleteSubtask(id: Int64) async throws
 }
 
-extension TodosServiceProtocol {
-    func createTodo(listId: Int64, title: String, description: String?, priority: String?, dueDate: Date?, plannedDate: Date?, noteIds: [Int64]? = nil, kind: String? = nil) async throws -> Todo {
-        try await createTodo(listId: listId, title: title, description: description, priority: priority, dueDate: dueDate, plannedDate: plannedDate, noteIds: noteIds, kind: kind)
-    }
-}
 
 final class TodosService: TodosServiceProtocol {
     private let client = SupabaseManager.client

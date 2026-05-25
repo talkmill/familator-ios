@@ -19,13 +19,15 @@ struct AddTodoView: View {
     var onAdded: (Todo) -> Void
 
     private let todosService: TodosServiceProtocol
-    private let notesService = NotesService()
-    private let contextsService = ContextsService()
+    private let notesService: NotesServiceProtocol
+    private let contextsService: ContextsServiceProtocol
 
-    init(listId: Int64, onAdded: @escaping (Todo) -> Void, todosService: TodosServiceProtocol = TodosService()) {
+    init(listId: Int64, onAdded: @escaping (Todo) -> Void, todosService: TodosServiceProtocol = TodosService(), notesService: NotesServiceProtocol = NotesService(), contextsService: ContextsServiceProtocol = ContextsService()) {
         self.listId = listId
         self.onAdded = onAdded
         self.todosService = todosService
+        self.notesService = notesService
+        self.contextsService = contextsService
     }
 
     var body: some View {
@@ -115,7 +117,8 @@ struct AddTodoView: View {
                 priority: priority,
                 dueDate: parsed.dueDate ?? (hasDueDate ? dueDate : nil),
                 plannedDate: parsed.plannedDate,
-                noteIds: Array(selectedNoteIds).sorted()
+                noteIds: Array(selectedNoteIds).sorted(),
+                kind: nil
             )
             let selectedContexts = contexts.filter { selectedContextIds.contains($0.id) }
             if let userId = auth.currentUser?.id {

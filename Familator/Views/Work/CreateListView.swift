@@ -50,7 +50,7 @@ struct CreateListView: View {
         isLoading = true
         defer { isLoading = false }
         do {
-            let list = try await listsService.createList(ownerId: userId, name: name.trimmingCharacters(in: .whitespaces), description: description.isEmpty ? nil : description)
+            let list = try await listsService.createList(ownerId: userId, name: name.trimmingCharacters(in: .whitespaces), description: description.isEmpty ? nil : description, isInbox: false)
             onCreated(list)
         } catch {
             errorMessage = error.localizedDescription

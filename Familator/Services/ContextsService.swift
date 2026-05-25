@@ -1,7 +1,15 @@
 import Foundation
 import Supabase
 
-final class ContextsService {
+protocol ContextsServiceProtocol {
+    func fetchContexts(userId: UUID) async throws -> [TaskContext]
+    func createContext(userId: UUID, name: String) async throws -> TaskContext
+    func renameContext(id: Int64, userId: UUID, name: String) async throws -> TaskContext
+    func deleteContext(id: Int64, userId: UUID) async throws
+    func setTodoContexts(todoId: Int64, userId: UUID, contextIds: [Int64]) async throws
+}
+
+final class ContextsService: ContextsServiceProtocol {
     private let client = SupabaseManager.client
 
     func fetchContexts(userId: UUID) async throws -> [TaskContext] {

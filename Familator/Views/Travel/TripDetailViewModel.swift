@@ -14,8 +14,12 @@ final class TripDetailViewModel: ObservableObject {
     @Published var localEndDate: String?
     @Published var localTransportMode: TransportMode = .driving
 
-    private let service = TripService()
+    private let service: TripServiceProtocol
     private var tripId: Int64?
+
+    init(service: TripServiceProtocol = TripService()) {
+        self.service = service
+    }
 
     private static let todayFormatter: DateFormatter = {
         let f = DateFormatter()

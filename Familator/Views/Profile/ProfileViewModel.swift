@@ -12,7 +12,11 @@ final class ProfileViewModel: ObservableObject {
     private var initialLoadAttemptCompleted = false
     private var loadSequence = 0
 
-    private let profileService = ProfileService()
+    private let profileService: ProfileServiceProtocol
+
+    init(profileService: ProfileServiceProtocol = ProfileService()) {
+        self.profileService = profileService
+    }
 
     func reset() {
         profile = nil

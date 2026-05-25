@@ -3,6 +3,94 @@ import XCTest
 
 @MainActor
 final class ItineraryViewModelTests: XCTestCase {
+
+    // MARK: - Helpers
+
+    private func makeViewModel(
+        itineraryService: TripItineraryServiceProtocol = TripItineraryService(),
+        legsService: TripLegsServiceProtocol = TripLegsService(),
+        placesService: TripPlacesServiceProtocol = TripPlacesService()
+    ) -> ItineraryViewModel {
+        ItineraryViewModel(
+            tripId: 1,
+            workspaceId: "00000000-0000-0000-0000-000000000001",
+            ownerId: UUID(),
+            itineraryService: itineraryService,
+            legsService: legsService,
+            placesService: placesService
+        )
+    }
+
+    private func makeItem(
+        id: Int64,
+        legId: Int64? = nil,
+        placeId: Int64? = nil,
+        itemType: ItineraryItemType = .activity,
+        title: String = "Item",
+        date: String? = nil,
+        startTime: String? = nil,
+        sortOrder: Int = 0
+    ) -> TripItineraryItem {
+        TripItineraryItem(
+            id: id,
+            tripId: 1,
+            legId: legId,
+            placeId: placeId,
+            workspaceId: "00000000-0000-0000-0000-000000000001",
+            ownerId: UUID(),
+            itemType: itemType,
+            title: title,
+            description: nil,
+            date: date,
+            startTime: startTime,
+            endTime: nil,
+            confirmationNumber: nil,
+            provider: nil,
+            sortOrder: sortOrder,
+            createdAt: "2026-01-01T00:00:00Z",
+            updatedAt: "2026-01-01T00:00:00Z"
+        )
+    }
+
+    private func makeLeg(
+        id: Int64,
+        name: String = "Leg",
+        sortOrder: Int = 0
+    ) -> TripLeg {
+        TripLeg(
+            id: id,
+            tripId: 1,
+            name: name,
+            sortOrder: sortOrder,
+            transportMode: .driving,
+            createdAt: "2026-01-01T00:00:00Z"
+        )
+    }
+
+    private func makePlace(
+        id: Int64,
+        name: String = "Place"
+    ) -> TripPlace {
+        TripPlace(
+            id: id,
+            tripId: 1,
+            legId: nil,
+            name: name,
+            notes: nil,
+            date: nil,
+            lat: nil,
+            lng: nil,
+            googlePlaceId: nil,
+            sortOrder: 0,
+            isRouteAnchor: false,
+            visitedAt: nil,
+            rating: nil,
+            createdAt: "2026-01-01T00:00:00Z"
+        )
+    }
+
+    // MARK: - Local state tests
+
     func testInitialStateIsEmpty() {
         let vm = makeViewModel()
         XCTAssertTrue(vm.items.isEmpty)
@@ -150,81 +238,38 @@ final class ItineraryViewModelTests: XCTestCase {
         XCTAssertNil(vm.placeName(for: nil))
     }
 
-    // MARK: - Helpers
+    // MARK: - Service integration via mock
 
-    private func makeViewModel() -> ItineraryViewModel {
-        ItineraryViewModel(
-            tripId: 1,
-            workspaceId: "00000000-0000-0000-0000-000000000001",
-            ownerId: UUID()
-        )
+    func testLoadFetchesAllThreeServices() async {
+        let mockItinerary = MockTripItineraryService()
+        let mockLegs = MockTripLegsService()
+        let mockPlaces = MockTripPlacesService()
+        let vm = makeViewModel(itineraryService: mockItinerary, legsService: mockLegs, placesService: mockPlaces)
+
+        mockItinerary.itemsToReturn = [makeItem(id: 1, title: "Flight")]
+        mockLegs.legsToReturn = [makeLeg(id: 1, name: "London")]
+        mockPlaces.placesToReturn = [makePlace(id: 1, name: "Big Ben")]
+
+        await vm.load()
+
+        XCTAssertEqual(vm.items.count, 1)
+        XCTAssertEqual(vm.legs.count, 1)
+        XCTAssertEqual(vm.places.count, 1)
+        XCTAssertEqual(mockItinerary.fetchItemsCalls, [1])
+        XCTAssertEqual(mockLegs.fetchLegsCalls, [1])
+        XCTAssertEqual(mockPlaces.fetchPlacesCalls, [1])
+        XCTAssertNil(vm.errorMessage)
     }
 
-    private func makeItem(
-        id: Int64,
-        legId: Int64? = nil,
-        placeId: Int64? = nil,
-        itemType: ItineraryItemType = .activity,
-        title: String = "Item",
-        date: String? = nil,
-        startTime: String? = nil,
-        sortOrder: Int = 0
-    ) -> TripItineraryItem {
-        TripItineraryItem(
-            id: id,
-            tripId: 1,
-            legId: legId,
-            placeId: placeId,
-            workspaceId: "00000000-0000-0000-0000-000000000001",
-            ownerId: UUID(),
-            itemType: itemType,
-            title: title,
-            description: nil,
-            date: date,
-            startTime: startTime,
-            endTime: nil,
-            confirmationNumber: nil,
-            provider: nil,
-            sortOrder: sortOrder,
-            createdAt: "2026-01-01T00:00:00Z",
-            updatedAt: "2026-01-01T00:00:00Z"
-        )
-    }
+    func testDeleteItemCallsServiceAndRemoves() async {
+        let mockItinerary = MockTripItineraryService()
+        let vm = makeViewModel(itineraryService: mockItinerary)
+        vm.items = [makeItem(id: 1), makeItem(id: 2)]
 
-    private func makeLeg(
-        id: Int64,
-        name: String = "Leg",
-        sortOrder: Int = 0
-    ) -> TripLeg {
-        TripLeg(
-            id: id,
-            tripId: 1,
-            name: name,
-            sortOrder: sortOrder,
-            transportMode: .driving,
-            createdAt: "2026-01-01T00:00:00Z"
-        )
-    }
+        await vm.deleteItem(id: 1)
 
-    private func makePlace(
-        id: Int64,
-        name: String = "Place"
-    ) -> TripPlace {
-        TripPlace(
-            id: id,
-            tripId: 1,
-            legId: nil,
-            name: name,
-            notes: nil,
-            date: nil,
-            lat: nil,
-            lng: nil,
-            googlePlaceId: nil,
-            sortOrder: 0,
-            isRouteAnchor: false,
-            visitedAt: nil,
-            rating: nil,
-            createdAt: "2026-01-01T00:00:00Z"
-        )
+        XCTAssertEqual(vm.items.count, 1)
+        XCTAssertEqual(vm.items[0].id, 2)
+        XCTAssertEqual(mockItinerary.deleteItemCalls, [1])
     }
 }

@@ -9,7 +9,12 @@ struct AddTripView: View {
     @State private var isLoading = false
     var onCreated: (Trip) -> Void
 
-    private let tripService = TripService()
+    private let tripService: TripServiceProtocol
+
+    init(onCreated: @escaping (Trip) -> Void, tripService: TripServiceProtocol = TripService()) {
+        self.onCreated = onCreated
+        self.tripService = tripService
+    }
 
     var body: some View {
         NavigationStack {

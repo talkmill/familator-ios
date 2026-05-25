@@ -15,14 +15,24 @@ final class ItineraryViewModel: ObservableObject {
 
     private var loadSequence = 0
     private var initialLoadAttemptCompleted = false
-    private let itineraryService = TripItineraryService()
-    private let legsService = TripLegsService()
-    private let placesService = TripPlacesService()
+    private let itineraryService: TripItineraryServiceProtocol
+    private let legsService: TripLegsServiceProtocol
+    private let placesService: TripPlacesServiceProtocol
 
-    init(tripId: Int64, workspaceId: String, ownerId: UUID) {
+    init(
+        tripId: Int64,
+        workspaceId: String,
+        ownerId: UUID,
+        itineraryService: TripItineraryServiceProtocol = TripItineraryService(),
+        legsService: TripLegsServiceProtocol = TripLegsService(),
+        placesService: TripPlacesServiceProtocol = TripPlacesService()
+    ) {
         self.tripId = tripId
         self.workspaceId = workspaceId
         self.ownerId = ownerId
+        self.itineraryService = itineraryService
+        self.legsService = legsService
+        self.placesService = placesService
     }
 
     struct ItemGroup: Identifiable {

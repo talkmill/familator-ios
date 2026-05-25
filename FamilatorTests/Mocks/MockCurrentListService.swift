@@ -12,6 +12,7 @@ final class MockCurrentListService: CurrentListServiceProtocol {
     var addTodoCalls: [(userId: UUID, todoId: Int64)] = []
     var removeTodoCalls: [(userId: UUID, todoId: Int64)] = []
     var clearCurrentCalls: [UUID] = []
+    var reorderCurrentCalls: [(userId: UUID, todoIds: [Int64])] = []
 
     func fetchCurrentItems(userId: UUID) async throws -> [CurrentListItem] {
         try await fetchCurrentItemsHandler?(userId) ?? []
@@ -37,6 +38,7 @@ final class MockCurrentListService: CurrentListServiceProtocol {
     }
 
     func reorderCurrent(userId: UUID, todoIds: [Int64]) async throws {
+        reorderCurrentCalls.append((userId, todoIds))
         try await reorderCurrentHandler?(userId, todoIds)
     }
 }
